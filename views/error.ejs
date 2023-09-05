@@ -1,0 +1,12 @@
+<!--Error template-->
+<% layout('layouts/boilerplate')%>
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading"><%=err.message%></h4>
+            <p>
+                <%=err.stack%> <!--Not a good idea for a production app, we will need to replace this soon.-->
+            </p>
+        </div>
+    </div>
+</div>

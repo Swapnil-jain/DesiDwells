@@ -1,0 +1,20 @@
+{
+  "name": "desidwells",
+  "version": "1.0.0",
+  "description": "Inspired from Yelpcamp project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Swapnil Jain",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "ejs-mate": "^4.0.0",
+    "express": "^4.18.2",
+    "joi": "^17.10.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^7.5.0",
+    "nodemon": "^3.0.1"
+  }
+}

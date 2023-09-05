@@ -1,0 +1,97 @@
+<!--Edit page template-->
+
+
+<% layout('layouts/boilerplate')%>
+<!--using ejs-mate to make a partial-->
+
+<div class="row">
+    <h1 class="text-center">Edit CampGround</h1>
+    <div class="col-6 offset-3">
+        <form
+            class="needs-validation"
+            action="/campgrounds/<%=campground._id%>?_method=PUT"
+            method="POST"
+            novalidate
+        >
+            <DIV class="mb-3">
+                <label class="form-label" for="title">Title</label>
+                <input
+                    class="form-control"
+                    type="text"
+                    id="title"
+                    value="<%=campground.title%>"
+                    name="campground[title]"
+                    required
+                />
+                <div class="valid-feedback">Looks good!</div>
+                <!--Error handling,copied from bootstrap.-->
+                <!--The campground[title] is a new format, see req.body to understand what it does. -->
+            </DIV>
+            <DIV class="mb-3">
+                <label class="form-label" for="location">Location</label>
+                <input
+                    class="form-control"
+                    type="text"
+                    id="location"
+                    value="<%=campground.location%>"
+                    name="campground[location]"
+                    required
+                />
+                <div class="valid-feedback">Looks good!</div>
+                <!--Error handling,copied from bootstrap.-->
+            </DIV>
+            <DIV class="mb-3">
+                <label class="form-label" for="image">Image url</label>
+                <input
+                    class="form-control"
+                    type="text"
+                    id="image"
+                    name="campground[image]"
+                    value="<%=campground.image%>"
+                    required
+                />
+                <div class="valid-feedback">Looks good!</div>
+                <!--Error handling,copied from bootstrap.-->
+            </DIV>
+            <div class="mb-3">
+                <label class="form-label" for="price">Price</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="price-label">₹</span>
+                    <input
+                        type="text"
+                        class="form-control"
+                        aria-label="price"
+                        aria-describedby="price-label"
+                        id="price"
+                        name="campground[price]"
+                        placeholder="0.00"
+                        value="<%=campground.price%>"
+                        required
+                    />
+                </div>
+                <div class="valid-feedback">Looks good!</div>
+                <!--Error handling,copied from bootstrap.-->
+            </div>
+            <DIV class="mb-3">
+                <label class="form-label" for="description">Description</label>
+                <textarea
+                    class="form-control"
+                    type="text"
+                    id="description"
+                    name="campground[description]"
+                    required
+                >
+                    <%=campground.description%>
+                </textarea>
+                <div class="valid-feedback">Looks good!</div>
+                <!--Error handling,copied from bootstrap.-->
+            </DIV>
+            <div class="mb-3">
+                <button class="btn btn-info">Update</button>
+            </div>
+        </form>
+        <a class="btn btn-secondary" href="/campgrounds/<%=campground._id%>"
+            >Back</a
+        >
+    </div>
+</div>
