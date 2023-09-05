@@ -9,6 +9,7 @@ const reviewRoutes = require("./routes/reviews"); //all our express review route
 const session = require("express-session"); //adding sessions functionality.
 const flash = require("connect-flash"); //adding flash message functionality.
 
+//starting up express.
 const app = express();
 const port = 3000;
 
