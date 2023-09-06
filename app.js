@@ -15,7 +15,8 @@ const userRoutes = require("./routes/users"); //all our express review routes.
 const campgroundRoutes = require("./routes/campgrounds"); //all our express /campground routes.
 const reviewRoutes = require("./routes/reviews"); //all our express review routes.
 
-//express start
+
+//starting up express.
 const app = express();
 const port = 3000;
 
