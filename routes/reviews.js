@@ -2,20 +2,11 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 //IMP: mergeParams: true enables us to have access to :id parameter, which is otherwise inaccessible in a route.
 const catchAsync = require("../utils/catchAsync"); //error function wrapper.
-const ExpressError = require("../utils/ExpressError"); //error class.
 const Campground = require("../models/campground"); //campground schema.
 const Review = require("../models/review");
-const { reviewSchema } = require("../joiSchema"); //joi schemas
-const { isLoggedIn } = require("../middleware"); //middleware for authenticating.
+const { isLoggedIn, validateReview } = require("../middleware"); //middleware for authenticating.
 
-//server side validation for reviews using Joi.
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(msg, 400);
-    } else next();
-};
+
 
 //adding the review functionality.
 router.post(

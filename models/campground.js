@@ -20,6 +20,10 @@ const CampgroundSchema = new Schema({
     image: {
         type: String,
     },
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
     //reviews follows one to many relationship.
     reviews: [
         {
@@ -39,4 +43,3 @@ CampgroundSchema.post("findOneAndDelete", async function (justDeletedCampground)
 });
 
 module.exports = mongoose.model("Campground", CampgroundSchema);
-

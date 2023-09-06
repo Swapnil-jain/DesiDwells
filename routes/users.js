@@ -45,7 +45,8 @@ router.post(
     }),
     (req, res) => {
         req.flash("success", "Welcome Back !");
-        const redirectUrl = res.locals.returnTo;
+        const redirectUrl = res.locals.returnTo || "/campgrounds";
+        //the || '/campgrounds' is written cuz otherwise if user is tryng to login from the homepage, res.locals.returnTo would be undefined so it would cause problems.
         res.redirect(redirectUrl);
     }
 );
