@@ -39,8 +39,14 @@ router.get(
     "/:id",
     catchAsync(async (req, res) => {
         const { id } = req.params;
-        const campground = await Campground.findById(id).populate("reviews").populate('author');
-        console.log(campground);
+        const campground = await Campground.findById(id)
+            .populate({
+                path: "reviews",
+                populate: {
+                    path: 'author'
+                }
+            })
+            .populate('author');
         if (!campground) { //in case campground doesn't exist.
             req.flash("error", "Campground doesn't exist"); 
             res.redirect("/campgrounds");

@@ -4,9 +4,7 @@ const router = express.Router({ mergeParams: true });
 const catchAsync = require("../utils/catchAsync"); //error function wrapper.
 const Campground = require("../models/campground"); //campground schema.
 const Review = require("../models/review");
-const { isLoggedIn, validateReview } = require("../middleware"); //middleware for authenticating.
-
-
+const { isLoggedIn, validateReview, isReviewAuthor } = require("../middleware"); //middleware for authenticating.
 
 //adding the review functionality.
 router.post(
@@ -16,6 +14,7 @@ router.post(
     catchAsync(async (req, res) => {
         const { id } = req.params;
         const newReview = new Review(req.body.review); //make the new review.
+        newReview.author = req.user._id; //sets the review author.
         const campground = await Campground.findById(id); //find the corresponding campground
         campground.reviews.push(newReview); //push the new review into db.
         await campground.save();
@@ -28,6 +27,7 @@ router.post(
 router.delete(
     "/:reviewId",
     isLoggedIn,
+    isReviewAuthor,
     catchAsync(async (req, res) => {
         let { id, reviewId } = req.params;
         //the first thing to do is go inside the correct campground and remove the id of the review which we are going to delete.
