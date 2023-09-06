@@ -4,6 +4,7 @@ const catchAsync = require("../utils/catchAsync"); //error function wrapper.
 const ExpressError = require("../utils/ExpressError"); //error class.
 const Campground = require("../models/campground"); //campground schema.
 const { campgroundSchema } = require("../joiSchema"); //joi schemas
+const { isLoggedIn } = require('../middleware'); //middleware for authenticating.
 
 //the below function is defined so that it is easier to use 'joi' library.
 //Joi is used for server side validation for campgrounds.
@@ -26,12 +27,13 @@ router.get(
 );
 
 //form to add a new campground
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new.ejs");
 });
 //where the new campground submits to:
 router.post(
     "/",
+    isLoggedIn,
     validateCampground,
     catchAsync(async (req, res) => {
         
@@ -62,13 +64,14 @@ router.get(
 //editing product, part 1
 router.get(
     "/:id/edit",
+    isLoggedIn,
     catchAsync(async (req, res) => {
         const { id } = req.params;
         const campground = await Campground.findById(id);
         if (!campground) {
             //in case campground doesn't exist.
             req.flash("error", "Campground doesn't exist");
-            res.redirect("/campgrounds");
+            return res.redirect("/campgrounds");
         }
         res.render("campgrounds/edit", { campground });
     })
@@ -77,6 +80,7 @@ router.get(
 //part-2: actualy replacing the campground.
 router.put(
     "/:id",
+    isLoggedIn,
     catchAsync(async (req, res) => {
         const { id } = req.params;
         const updatedCampground = await Campground.findByIdAndUpdate(
@@ -94,6 +98,7 @@ router.put(
 //deleting the campground and the corresponding reviews.
 router.delete(
     "/:id",
+    isLoggedIn,
     catchAsync(async (req, res) => {
         const { id } = req.params;
         const campground = await Campground.findByIdAndDelete(id);

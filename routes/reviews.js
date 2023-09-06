@@ -6,7 +6,7 @@ const ExpressError = require("../utils/ExpressError"); //error class.
 const Campground = require("../models/campground"); //campground schema.
 const Review = require("../models/review");
 const { reviewSchema } = require("../joiSchema"); //joi schemas
-
+const { isLoggedIn } = require("../middleware"); //middleware for authenticating.
 
 //server side validation for reviews using Joi.
 const validateReview = (req, res, next) => {
@@ -20,6 +20,7 @@ const validateReview = (req, res, next) => {
 //adding the review functionality.
 router.post(
     "/",
+    isLoggedIn,
     validateReview,
     catchAsync(async (req, res) => {
         const { id } = req.params;
@@ -35,6 +36,7 @@ router.post(
 //review deleting feature
 router.delete(
     "/:reviewId",
+    isLoggedIn,
     catchAsync(async (req, res) => {
         let { id, reviewId } = req.params;
         //the first thing to do is go inside the correct campground and remove the id of the review which we are going to delete.
