@@ -4,10 +4,17 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override"); //library to handle editing comments and form.
 const ejsMate = require("ejs-mate"); //a library used to handle css and beautification.
 const ExpressError = require("./utils/ExpressError"); //error class.
-const campgroundRoutes = require("./routes/campgrounds"); //all our express /campground routes.
-const reviewRoutes = require("./routes/reviews"); //all our express review routes.
 const session = require("express-session"); //adding sessions functionality.
 const flash = require("connect-flash"); //adding flash message functionality.
+const passport = require("passport"); //adding passport for authentication.
+const LocalStrategy = require("passport-local"); //setup passport-local.
+const User = require("./models/user"); //user schema
+
+//routes.
+const userRoutes = require("./routes/users"); //all our express review routes.
+const campgroundRoutes = require("./routes/campgrounds"); //all our express /campground routes.
+const reviewRoutes = require("./routes/reviews"); //all our express review routes.
+
 
 //starting up express.
 const app = express();
@@ -15,7 +22,7 @@ const port = 3000;
 
 app.set("view engine", "ejs"); //use ejs module.
 app.set("views", path.join(__dirname, "/views"));
-app.engine("ejs", ejsMate);
+app.engine("ejs", ejsMate); //ejsmate 
 
 //mongodb connection
 main();
@@ -47,14 +54,25 @@ app.use(
     })
 );
 app.use(flash()); //using flash functionality.
+
+//below are some middleware related to passport.
+app.use(passport.initialize()); //initialize passport.
+app.use(passport.session()); //used when persisten login sessions are used. (like 'rememberMe' functionality)
+passport.use(new LocalStrategy(User.authenticate())); //from local-passport-docs. This line is some config line.
+passport.serializeUser(User.serializeUser()); //from local-passport-docs
+passport.deserializeUser(User.deserializeUser()); //from local-passport-docs
+
 app.use((req, res, next) => {
-    //this middleware allows us to have access to the flash message on every single ejs template.
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
+    res.locals.currentUser = req.user; //sets req.user which is passport's property to currentUser.
+    res.locals.success = req.flash("success"); //adding 'success' as a keyword for flash messages.
+    res.locals.error = req.flash("error"); //adding 'error' as a keyword for flash messages.
     next();
 });
+
+//middleware of express routes.
 app.use("/campgrounds", campgroundRoutes); //using express routes.
 app.use("/campgrounds/:id/reviews", reviewRoutes); //using express routes.
+app.use("/", userRoutes); //using express routes.
 
 
 //home page

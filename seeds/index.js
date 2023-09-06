@@ -32,7 +32,8 @@ const seedDB = async () => {
             title: `${sample(descriptors)} ${sample(places)}`, //basically picking one word each from 'descriptors' and 'places' array to generate a random name.
             image: "https://source.unsplash.com/random/?camping",
             description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim quidem asperiores cupiditate perferendis, nobis vel quod, dolor at placeat quam fugiat? Officiis praesentium natus tenetur exercitationem placeat beatae, molestiae ratione!",
-            price: price
+            price: price,
+            author: '64f86a57aa44fa7d460fbd3c', //belongs to account named admin, change it if u delete all accounts. 
         });
         await camp.save();
     }

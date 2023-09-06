@@ -1,20 +1,8 @@
 const express = require("express");
 const router = express.Router(); 
 const catchAsync = require("../utils/catchAsync"); //error function wrapper.
-const ExpressError = require("../utils/ExpressError"); //error class.
 const Campground = require("../models/campground"); //campground schema.
-const { campgroundSchema } = require("../joiSchema"); //joi schemas
-
-//the below function is defined so that it is easier to use 'joi' library.
-//Joi is used for server side validation for campgrounds.
-const validateCampground = (req, res, next) => {
-    //note that campgroundSchema is defined in joiSchema.js file.
-    const { error } = campgroundSchema.validate(req.body); //ensures req.body has validation on server side using joi library.
-    if (error) {
-        const msg = error.details.map((el) => el.message).join(","); //basically 'error.details' is an array which we need to traverse to fetch the correct stuff which we need to use during throw.
-        throw new ExpressError(msg, 400);
-    } else next();
-};
+const { isLoggedIn, isAuthor, validateCampground } = require("../middleware"); //middleware for authenticating.
 
 //main camp page
 router.get(
@@ -26,16 +14,17 @@ router.get(
 );
 
 //form to add a new campground
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new.ejs");
 });
 //where the new campground submits to:
 router.post(
     "/",
+    isLoggedIn,
     validateCampground,
     catchAsync(async (req, res) => {
-        
         const newCampground = new Campground(req.body.campground); //making the new campground.
+        newCampground.author = req.user._id; //req.user is provided by passport. so this line sets the campground.author. 
         await newCampground.save();
         req.flash("success", "Successfully made a new campground !"); //adding the flash message.
         res.redirect(`/campgrounds/${newCampground._id}`);
@@ -50,7 +39,14 @@ router.get(
     "/:id",
     catchAsync(async (req, res) => {
         const { id } = req.params;
-        const campground = await Campground.findById(id).populate("reviews");
+        const campground = await Campground.findById(id)
+            .populate({
+                path: "reviews",
+                populate: {
+                    path: 'author'
+                }
+            })
+            .populate('author');
         if (!campground) { //in case campground doesn't exist.
             req.flash("error", "Campground doesn't exist"); 
             res.redirect("/campgrounds");
@@ -62,13 +58,15 @@ router.get(
 //editing product, part 1
 router.get(
     "/:id/edit",
+    isLoggedIn,
+    isAuthor,
     catchAsync(async (req, res) => {
         const { id } = req.params;
         const campground = await Campground.findById(id);
         if (!campground) {
             //in case campground doesn't exist.
             req.flash("error", "Campground doesn't exist");
-            res.redirect("/campgrounds");
+            return res.redirect("/campgrounds");
         }
         res.render("campgrounds/edit", { campground });
     })
@@ -77,9 +75,11 @@ router.get(
 //part-2: actualy replacing the campground.
 router.put(
     "/:id",
+    isLoggedIn,
+    isAuthor,
     catchAsync(async (req, res) => {
         const { id } = req.params;
-        const updatedCampground = await Campground.findByIdAndUpdate(
+        await Campground.findByIdAndUpdate(
             id,
             { ...req.body.campground },
             {
@@ -94,9 +94,11 @@ router.put(
 //deleting the campground and the corresponding reviews.
 router.delete(
     "/:id",
+    isLoggedIn,
+    isAuthor,
     catchAsync(async (req, res) => {
         const { id } = req.params;
-        const campground = await Campground.findByIdAndDelete(id);
+        await Campground.findByIdAndDelete(id);
         req.flash("success", "Campground Deleted Successfully"); //adding the flash message.
         res.redirect("/campgrounds");
     })
