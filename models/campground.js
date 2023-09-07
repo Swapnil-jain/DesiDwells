@@ -3,6 +3,16 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema; //so that later instead of writing mongoose.Schema everywhere, we can just call it Schema so code remains shorter.
 const Review = require("./review");
 
+const imageSchema = new Schema({
+    url: String,
+    filename: String,
+});
+
+//We are splitting the url to include w_200, so that cloudinary can autosize the images uploaded to it.
+imageSchema.virtual('thumbnail').get(function () {
+    return this.url.replace('/upload', '/upload/w_200');
+})
+
 const CampgroundSchema = new Schema({
     title: {
         type: String,
@@ -17,12 +27,10 @@ const CampgroundSchema = new Schema({
     location: {
         type: String,
     },
-    image: {
-        type: String,
-    },
+    images: [imageSchema],
     author: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
     },
     //reviews follows one to many relationship.
     reviews: [

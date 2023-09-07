@@ -1,5 +1,6 @@
 //controllers are essentially ways to shorten the code.
 const Campground = require("../models/campground"); //campground schema.
+const {cloudinary}=require("../cloudinary"); //used to handle images
 
 //index page.
 module.exports.index = async (req, res) => {
@@ -15,6 +16,11 @@ module.exports.renderNewForm = (req, res) => {
 //new form submission
 module.exports.createCampground=async (req, res) => {
     const newCampground = new Campground(req.body.campground); //making the new campground.
+    newCampground.images = req.files.map((f) => ({
+        //req.files is an array having the uploaded files.
+        url: f.path,
+        filename: f.filename,
+    })); 
     newCampground.author = req.user._id; //req.user is provided by passport. so this line sets the campground.author.
     await newCampground.save();
     req.flash("success", "Successfully made a new campground !"); //adding the flash message.
@@ -56,13 +62,36 @@ module.exports.renderEditForm = async (req, res) => {
 //edit form submission
 module.exports.editCampground = async (req, res) => {
     const { id } = req.params;
-    await Campground.findByIdAndUpdate(
+    const editedCamp = await Campground.findByIdAndUpdate(
         id,
         { ...req.body.campground },
         {
             runValidators: true,
+            //remember that runValidators is used to ensure the checks defined in schema are enforced.
         }
-    ); //remember that runValidators is used to ensure the checks defined in schema are enforced.
+    );
+    //make an array of the newly added images.
+    const imgs = req.files.map((f) => ({
+        url: f.path,
+        filename: f.filename,
+    }));
+    editedCamp.images.push(...imgs); //notice are using 'push' to add additional images.
+
+    //the below code is used to delete the selected images from mongodb and cloudinary.
+    if (req.body.deleteImages) {
+        //delete from cloudinary.
+        for (let filename of req.body.deleteImages) {
+            cloudinary.uploader.destroy(filename);
+        }
+        //delete from mongo.
+        await editedCamp.updateOne({
+            $pull: {
+                images: { filename: { $in: req.body.deleteImages } },
+            },
+        });
+    }
+
+    await editedCamp.save();
     req.flash("success", "Successfully edited the campground"); //adding the flash message.
     res.redirect(`/campgrounds/${id}`);
 };

@@ -12,8 +12,9 @@
             action="/campgrounds"
             method="POST"
             novalidate
+            enctype="multipart/form-data"
         >
-            <DIV class="mb-3">
+            <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
                 <input
                     class="form-control"
@@ -23,8 +24,8 @@
                     required
                 />
                 <div class="valid-feedback">Looks good!</div> <!--Error handling,copied from bootstrap.-->
-            </DIV>
-            <DIV class="mb-3">
+            </div>
+            <div class="mb-3">
                 <label class="form-label" for="location">Location</label>
                 <input
                     class="form-control"
@@ -34,18 +35,19 @@
                     required
                 />
                 <div class="valid-feedback">Looks good!</div> <!--Error handling,copied from bootstrap.-->
-            </DIV>
-            <DIV class="mb-3">
-                <label class="form-label" for="image">Image url</label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Upload Images</label>
                 <input
                     class="form-control"
-                    type="text"
+                    type="file"
                     id="image"
-                    name="campground[image]"
+                    name="image"
                     required
+                    multiple
                 />
                 <div class="valid-feedback">Looks good!</div> <!--Error handling,copied from bootstrap.-->
-            </DIV>
+            </div>
             <div class="mb-3">
                 <label class="form-label" for="price">Price</label>
                 <div class="input-group">
@@ -64,7 +66,7 @@
                 <div class="valid-feedback">Looks good!</div> <!--Error handling,copied from bootstrap.-->
             </div>
 
-            <DIV class="mb-3">
+            <div class="mb-3">
                 <label class="form-label" for="description">Description</label>
                 <textarea
                     class="form-control"
@@ -74,7 +76,7 @@
                     required
                 ></textarea>
                 <div class="valid-feedback">Looks good!</div> <!--Error handling,copied from bootstrap.-->
-            </DIV>
+            </div>
 
             <div class="mb-3">
                 <button class="btn btn-success">Add</button>

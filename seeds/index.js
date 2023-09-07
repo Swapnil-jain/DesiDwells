@@ -30,10 +30,24 @@ const seedDB = async () => {
         const camp = new Campground({
             location: `${cities[random1000].City}, ${cities[random1000].State}`,
             title: `${sample(descriptors)} ${sample(places)}`, //basically picking one word each from 'descriptors' and 'places' array to generate a random name.
-            image: "https://source.unsplash.com/random/?camping",
-            description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim quidem asperiores cupiditate perferendis, nobis vel quod, dolor at placeat quam fugiat? Officiis praesentium natus tenetur exercitationem placeat beatae, molestiae ratione!",
+            description:
+            "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim quidem asperiores cupiditate perferendis, nobis vel quod, dolor at placeat quam fugiat? Officiis praesentium natus tenetur exercitationem placeat beatae, molestiae ratione!",
             price: price,
-            author: '64f86a57aa44fa7d460fbd3c', //belongs to account named admin, change it if u delete all accounts. 
+            author: "64f86a57aa44fa7d460fbd3c", //belongs to account named admin, change it if u delete all accounts.
+            images: [
+                {
+                    url: "https://res.cloudinary.com/do9jjdqd9/image/upload/v1694070054/DesiDwells/q1rgciypxmrok7dckt3b.jpg",
+                    filename: "DesiDwells/q1rgciypxmrok7dckt3b",
+                },
+                {
+                    url: "https://res.cloudinary.com/do9jjdqd9/image/upload/v1694070055/DesiDwells/uidlkt2lhxalazfsotec.jpg",
+                    filename: "DesiDwells/uidlkt2lhxalazfsotec",
+                },
+                {
+                    url: "https://res.cloudinary.com/do9jjdqd9/image/upload/v1694070056/DesiDwells/cy8vbt7i7kg0z5b2t7gv.webp",
+                    filename: "DesiDwells/cy8vbt7i7kg0z5b2t7gv",
+                },
+            ],
         });
         await camp.save();
     }
