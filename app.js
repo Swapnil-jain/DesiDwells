@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config(); //means if we are in 'development' mode, require the dotenv package.
+}
 const express = require("express");
 const path = require("path"); //needed to configure path.
 const mongoose = require("mongoose");
