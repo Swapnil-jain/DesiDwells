@@ -4,9 +4,9 @@
 <% layout('layouts/boilerplate')%>
 <!--using ejs-mate to make a partial-->
 
-<div class="row">
+<div class="row mb-5">
     <h1 class="text-center">Edit CampGround</h1>
-    <div class="col-6 offset-3">
+    <div class="col-md-6 offset-md-3">
         <form
             class="needs-validation"
             action="/campgrounds/<%=campground._id%>?_method=PUT"
@@ -85,7 +85,7 @@
             </div>
             <div class="mb-3">
                 <%campground.images.forEach(function(img,i){%>
-                    <img src="<%=img.thumbnail%>" class='img-thumbnail' alt="">
+                    <img crossorigin="anonymous" src="<%=img.thumbnail%>" class='img-thumbnail' alt="Img">
                     <div class="form-check-inline">
                         <input type="checkbox" id="img-<%=i%>"
                         name="deleteImages[]" value="<%=img.filename%>">
