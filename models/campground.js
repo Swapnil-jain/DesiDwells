@@ -13,6 +13,8 @@ imageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 })
 
+const opts={toJSON:{virtuals:true}}; //something to do with mongoose and virtual function.
+
 const CampgroundSchema = new Schema({
     title: {
         type: String,
@@ -39,7 +41,31 @@ const CampgroundSchema = new Schema({
             ref: "Review",
         },
     ],
+    geometry: {
+        type: {
+            type: String, // Don't do `{ location: { type: String } }`
+            enum: ["Point"], // 'location.type' must be 'Point'
+            required: true,
+        },
+        coordinates: {
+            type: [Number],
+            required: true,
+        },
+    },
+    creationDate: String
+},opts);
+
+
+//This virtual function helps us to make that small card thingy when we click on a campground on the map.
+//This has been used in clustermap.js file.
+CampgroundSchema.virtual("properties.popUpMarkup").get(function () {
+    return `
+    <strong>
+        <a href="/campgrounds/${this._id}">${this.title}</a>
+    </strong>
+    <p>${this.description.substring(0,20)}...</p>`;
 });
+
 
 //This is a MONGOOSE middleware (not an express middleware).
 //The below written lines of code helps us to delete campground and the corresponding reviews. Temember, we will need a post middleware, not a premiddleware because the post middleware will first delete our campground, and then pass it as an argument in justDeletedCampground. So we still have access to it, even tho it is gone from database.

@@ -1,13 +1,18 @@
 <!--All campgrounds page template-->
-
 <% layout('layouts/boilerplate')%> <!--using ejs-mate to make a partial-->
+<div id="map" style="width:100%; height: 500px"></div>
+
 <h1>All Campgrounds</h1>
 <% for(let campground of campgrounds){ %>
 <!--Below code has used bootstrap a lot to style the homepage.-->
 <div class="card mb-3">
     <div class="row">
         <div class="col-md-4">
-            <img class="img-fluid" alt="" src="<%=campground.images[0].url%>">
+            <%if(campground.images.length){%>
+                <img class="img-fluid" alt="Camp image" src="<%=campground.images[0].url%>">
+            <%} else {%>
+                <img class="img-fluid" alt="Stock Image" src="https://res.cloudinary.com/do9jjdqd9/image/upload/v1694149831/DesiDwells/sg2sai6tv9y8ks2hhdel.webp">
+            <%}%>
         </div>
         <div class="col-md-8">
             <div class="card-body">
@@ -24,3 +29,9 @@
     </div>
 </div>
 <%}%>
+
+<script>
+    const mapToken='<%-process.env.MAPBOX_TOKEN%>'; //essential to make it work.
+     const campgrounds= {features: <%-JSON.stringify(campgrounds)%>}; //quotation marks NAHI aayega yaha par.
+</script>
+<script src="javascripts/clustermap.js"></script>

@@ -1,6 +1,13 @@
 //controllers are essentially ways to shorten the code.
 const Campground = require("../models/campground"); //campground schema.
-const {cloudinary}=require("../cloudinary"); //used to handle images
+const { cloudinary } = require("../cloudinary"); //used to handle images
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding"); //geocoding thingy.
+const dateFormatter = require('../utils/date.js');
+
+//configuring maxbox for geocoding.
+const geocoder = mbxGeocoding({
+    accessToken: process.env.MAPBOX_TOKEN,
+});
 
 //index page.
 module.exports.index = async (req, res) => {
@@ -14,13 +21,23 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 //new form submission
-module.exports.createCampground=async (req, res) => {
+module.exports.createCampground = async (req, res) => {
+    const geoData = await geocoder
+        .forwardGeocode({
+            //forward geocoding.
+            query: req.body.campground.location,
+            limit: 1,
+        })
+        .send();
+
     const newCampground = new Campground(req.body.campground); //making the new campground.
+    newCampground.geometry = geoData.body.features[0].geometry; //storing geometry in geoJSON format.
+    newCampground.creationDate = dateFormatter.getCurrentFormattedDate(); //storing creating date.
     newCampground.images = req.files.map((f) => ({
         //req.files is an array having the uploaded files.
         url: f.path,
         filename: f.filename,
-    })); 
+    }));
     newCampground.author = req.user._id; //req.user is provided by passport. so this line sets the campground.author.
     await newCampground.save();
     req.flash("success", "Successfully made a new campground !"); //adding the flash message.
@@ -76,6 +93,16 @@ module.exports.editCampground = async (req, res) => {
         filename: f.filename,
     }));
     editedCamp.images.push(...imgs); //notice are using 'push' to add additional images.
+
+    //for editing geography:
+    const geoData = await geocoder
+        .forwardGeocode({
+            //forward geocoding.
+            query: req.body.campground.location,
+            limit: 1,
+        })
+        .send();
+    editedCamp.geometry = geoData.body.features[0].geometry; //storing new geometry in geoJSON format.
 
     //the below code is used to delete the selected images from mongodb and cloudinary.
     if (req.body.deleteImages) {
