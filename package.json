@@ -1,4 +1,7 @@
 {
+  "engines":{
+    "node":"18.17.1"
+  },
   "name": "desidwells",
   "version": "1.0.0",
   "description": "Inspired from Yelpcamp project",
@@ -12,6 +15,7 @@
     "@mapbox/mapbox-sdk": "^0.15.3",
     "cloudinary": "^1.40.0",
     "connect-flash": "^0.1.1",
+    "connect-mongo": "^5.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",

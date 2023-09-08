@@ -14,6 +14,9 @@ const LocalStrategy = require("passport-local"); //setup passport-local.
 const User = require("./models/user"); //user schema
 const mongoSanitize = require("express-mongo-sanitize"); //security against sql injection.
 const helmet = require("helmet"); //helmet is used for security purposes.
+const dbUrl = process.env.DB_URL;
+//local: mongodb://127.0.0.1:27017/desidwells
+const MongoStore = require("connect-mongo"); //for session data.
 
 
 //routes.
@@ -34,7 +37,7 @@ app.engine("ejs", ejsMate); //ejsmate
 main();
 async function main() {
     try {
-        await mongoose.connect("mongodb://127.0.0.1:27017/desidwells");
+        await mongoose.connect(dbUrl);
         console.log("Mongo connection opened\n");
     } catch (err) {
         console.log("Mongo connection failed\n");
@@ -50,9 +53,13 @@ app.use(mongoSanitize()); //protection against sql injection
 app.use(
     //this is used to setup session.
     session({
-        name: 'session_iden',
+        name: "session_iden",
         secret: "thisisasecretkey", //secret has a similar concept to cookie secret.
         resave: false,
+        store: MongoStore.create({
+            mongoUrl: dbUrl,
+            touchAfter: 72 * 3600, // time period in seconds
+        }),
         saveUninitialized: true,
         cookie: {
             expires: Date.now() + 1000 * 60 * 60 * 24 * 7, //number of miliseconds in a week. this sets the exact date when it will expire.
