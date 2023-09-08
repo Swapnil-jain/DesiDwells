@@ -3,10 +3,6 @@
 <% layout('layouts/boilerplate')%>
 <!--using ejs-mate to make a partial-->
 <link rel="stylesheet" href="/stylesheets/stars.css"> <!--The review star css sheet.-->
-<script>
-    const mapToken='<%-process.env.MAPBOX_TOKEN%>'; //essential to make it work.
-    const campground= <%-JSON.stringify(campground)%>; //quotation marks NAHI aayega yaha par.
-</script>
 
 <div class="row">
     <div class="col-6">
@@ -119,4 +115,8 @@
         <% } %>
     </div>
 </div>
+<script>
+    const mapToken='<%-process.env.MAPBOX_TOKEN%>'; //essential to make it work.
+    const campground= <%-JSON.stringify(campground)%>; //quotation marks NAHI aayega yaha par.
+</script>
 <script src="/javascripts/showmap.js"></script>

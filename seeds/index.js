@@ -24,11 +24,10 @@ const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
     await Campground.deleteMany({}); //delete everything first.
-    for (let i = 0; i < 10; i++) {
-        const random1000 = Math.floor(Math.random() * 50);
+    for (let i = 0; i < 100; i++) {
         const price = Math.floor(Math.random() * 10000) + 10; //generating a random price value.
         const camp = new Campground({
-            location: `${cities[random1000].City}, ${cities[random1000].State}`,
+            location: `${cities[i+1].City}, ${cities[i+1].State}`,
             title: `${sample(descriptors)} ${sample(places)}`, //basically picking one word each from 'descriptors' and 'places' array to generate a random name.
             description:
                 "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim quidem asperiores cupiditate perferendis, nobis vel quod, dolor at placeat quam fugiat? Officiis praesentium natus tenetur exercitationem placeat beatae, molestiae ratione!",
@@ -41,7 +40,13 @@ const seedDB = async () => {
                     filename: "DesiDwells/sg2sai6tv9y8ks2hhdel",
                 },
             ],
-            geometry: { type: "Point", coordinates: [-69.431322, 10.099517] }, //just a default value for the seed.
+            geometry: {
+                type: "Point",
+                coordinates: [
+                    cities[i+1].Longitude,
+                    cities[i+1].Latitude,
+                ],
+            }, //just a default value for the seed.
         });
         await camp.save();
     }
