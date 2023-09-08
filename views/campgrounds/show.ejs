@@ -3,9 +3,14 @@
 <% layout('layouts/boilerplate')%>
 <!--using ejs-mate to make a partial-->
 <link rel="stylesheet" href="/stylesheets/stars.css"> <!--The review star css sheet.-->
+<script>
+    const mapToken='<%-process.env.MAPBOX_TOKEN%>'; //essential to make it work.
+    const campground= <%-JSON.stringify(campground)%>; //quotation marks NAHI aayega yaha par.
+</script>
 
 <div class="row">
     <div class="col-6">
+        <div id='map' style='width: 400px; height: 300px;'></div>
         <div id="campgroundCarousel" class="carousel slide">
             <div class="carousel-inner">
                 <%campground.images.forEach((img, i) => {  %>
@@ -14,7 +19,7 @@
                     </div>
                 <% }) %>
             </div>
-            <% if(campground.images.length > 1){ %>
+            <% if(campground.images.length){ %>
                 <button class="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
@@ -23,6 +28,8 @@
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>
+            <%} else {%>
+                <img class="img-fluid" alt="Stock Image" src="https://res.cloudinary.com/do9jjdqd9/image/upload/v1694149831/DesiDwells/sg2sai6tv9y8ks2hhdel.webp">
             <%}%>
         </div>
         <div class="card mb-3">
@@ -50,9 +57,8 @@
             </div>
             <%}%>
             <div class="card-footer text-body-secondary">
-            Posted On Sample Date
+            Posted on <%=campground.creationDate%>
             </div>
-
         </div>
         <a class='btn btn-secondary mb-4' href="/campgrounds">
             All campgrounds
@@ -113,3 +119,4 @@
         <% } %>
     </div>
 </div>
+<script src="/javascripts/showmap.js"></script>
