@@ -12,6 +12,9 @@ const flash = require("connect-flash"); //adding flash message functionality.
 const passport = require("passport"); //adding passport for authentication.
 const LocalStrategy = require("passport-local"); //setup passport-local.
 const User = require("./models/user"); //user schema
+const mongoSanitize = require("express-mongo-sanitize"); //security against sql injection.
+const helmet = require("helmet"); //helmet is used for security purposes.
+
 
 //routes.
 const userRoutes = require("./routes/users"); //all our express review routes.
@@ -43,9 +46,11 @@ async function main() {
 app.use(express.urlencoded({ extended: true })); //handling form data
 app.use(methodOverride("_method")); //put/patch wale requests.
 app.use(express.static(path.join(__dirname, "/public"))); //allows express to use the 'public' directory.
+app.use(mongoSanitize()); //protection against sql injection
 app.use(
     //this is used to setup session.
     session({
+        name: 'session_iden',
         secret: "thisisasecretkey", //secret has a similar concept to cookie secret.
         resave: false,
         saveUninitialized: true,
@@ -53,10 +58,58 @@ app.use(
             expires: Date.now() + 1000 * 60 * 60 * 24 * 7, //number of miliseconds in a week. this sets the exact date when it will expire.
             maxAge: 1000 * 60 * 60 * 24 * 7, //this sets to the maximum age of cookie irrespective of the date created.
             httpOnly: true, //security related reason related to XSS vulnerability.
+            //secure: true //makes so that cookies work only on https connections.
         },
     })
 );
 app.use(flash()); //using flash functionality.
+app.use(helmet()); //helmet is used for security purposes.
+
+//all the blow links are external links. We listed them out cuz helmet needs it during config.
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://kit.fontawesome.com",
+    "https://cdnjs.cloudflare.com",
+    "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com",
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.mapbox.com",
+    "https://api.tiles.mapbox.com",
+    "https://fonts.googleapis.com",
+    "https://use.fontawesome.com",
+    "https://cdn.jsdelivr.net/",
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com",
+    "https://*.tiles.mapbox.com",
+    "https://events.mapbox.com",
+];
+const fontSrcUrls = [];
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            childSrc: ["blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/do9jjdqd9/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                "https://images.unsplash.com",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
 
 //below are some middleware related to passport.
 app.use(passport.initialize()); //initialize passport.

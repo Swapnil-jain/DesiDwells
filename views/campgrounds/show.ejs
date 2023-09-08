@@ -10,7 +10,7 @@
             <div class="carousel-inner">
                 <%campground.images.forEach((img, i) => {  %>
                     <div class="carousel-item <%= i=== 0 ? 'active':''%>">
-                        <img src="<%=img.url%>" class="d-block w-100" alt="Campsite image">
+                        <img crossorigin="anonymous" src="<%=img.url%>" class="d-block w-100" alt="Campsite image">
                     </div>
                 <% }) %>
             </div>
@@ -24,7 +24,7 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             <%} else {%>
-                <img class="img-fluid" alt="Stock Image" src="https://res.cloudinary.com/do9jjdqd9/image/upload/v1694149831/DesiDwells/sg2sai6tv9y8ks2hhdel.webp">
+                <img crossorigin="anonymous" class="img-fluid" alt="Stock Image" src="https://res.cloudinary.com/do9jjdqd9/image/upload/v1694149831/DesiDwells/sg2sai6tv9y8ks2hhdel.webp">
             <%}%>
         </div>
         <div class="card mb-3">
